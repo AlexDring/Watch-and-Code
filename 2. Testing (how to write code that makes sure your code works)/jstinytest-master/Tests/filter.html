@@ -37,17 +37,16 @@
   // Expect filtered array to be [2,3]
 
   function filter(originalArray, callback, optionalThis) {
-    var filteredCallback = callback;
     var newArray = [];
 
     if (optionalThis) {
-      filteredCallback = callback.bind(optionalThis);
+      callback = callback.bind(optionalThis);
     }
 
     var filteredArray = [];
 
     for (let i = 0; i < originalArray.length; i++) {
-      if (filteredCallback(originalArray[i], i, originalArray)) {
+      if (callback(originalArray[i], i, originalArray)) {
         filteredArray.push(originalArray[i]);
       };
     }

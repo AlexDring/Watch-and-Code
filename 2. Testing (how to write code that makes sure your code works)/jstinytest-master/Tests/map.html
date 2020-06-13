@@ -67,7 +67,7 @@
       eq(numberOfTimesCallbackHasRun, 3);
     },
     'It should pass the ith element as the first argument to the callback': function () {
-      map([1, 2], function (element) {
+      map([1], function (element) {
         eq(element, 1);
       });
     },
