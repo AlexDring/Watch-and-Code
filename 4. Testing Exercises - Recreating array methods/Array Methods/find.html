@@ -21,28 +21,59 @@
   // Return Value:
   // The value of the first element in the array that satisfies the provided testing function. Otherwise, undefined is returned.
 
-  function find(array, callback, optionalThisArg) {
+  function find(originalArray, callback, optionalThisArg) {
+    var length = originalArray.length;
+    const unchangedArray = originalArray;
+
     if (optionalThisArg) {
       callback = callback.bind(optionalThisArg);
     }
-    for (let i = 0; i < array.length; i++) {
-      if (callback(array[i], i)) {
-        return array[i];
+
+    for (let i = 0; i < length; i++) {
+      if (callback(unchangedArray[i], i, unchangedArray)) {
+        return unchangedArray[i];
       };
     }
   };
 
+  // var theArray = [1, 2, 3, 4, 5, 23];
+
+  // function dogFunc(element) {
+  //   theArray[1] = 'dog';
+  //   console.log(element);
+  //   return element > 1;
+
+  // }
+
+  // console.log(theArray.find(dogFunc));
+
   tests({
     'It should executes the callback function once for each index of the array': function () {
       var howManyTimesDoesTheCallbackRun = 0;
-      find([1, 2, 23, 4, 5], function (index) {
+      find([1, 2, 23, 4, 5], function () {
         howManyTimesDoesTheCallbackRun++
       })
       eq(howManyTimesDoesTheCallbackRun, 5);
     },
+    'It should pass the ith element as the first argument to the callback': function () {
+      find([1], function (element) {
+        eq(element, 1)
+      })
+    },
+    'It should pass in the ith position as the second argument to the callback': function () {
+      find([1], function (element, index) {
+        eq(index, 0)
+      })
+    },
+    'It should pass in the original array as the third argument to the callback': function () {
+      var testArray = [1, 2, 3, 4];
+      find(testArray, function (element, index, array) {
+        eq(testArray, array);
+      })
+    },
     'It should invoke the callback for every index of the array, not just those with assigned values': function () {
       var howManyTimesDoesTheCallbackRun = 0;
-      find([1, 2, 23, 4, 5, , , , ,], function (index) {
+      find([1, 2, 23, 4, 5, , , , ,], function () {
         howManyTimesDoesTheCallbackRun++
       })
       eq(howManyTimesDoesTheCallbackRun, 9);
@@ -63,6 +94,24 @@
       find([1, 2, 23, 4, 5, 21, , , ,], function (element) {
         eq(this.description, 'this should be this!')
       }, { description: 'this should be this!' })
+    },
+    'It should not visit any elements added to the array once callback after the call to find begins.': function () {
+      var testArray = [1, 2, 23, 4, 5, 21]
+      find([testArray], function (element) {
+        if (element > 20) {
+          testArray.push(1);
+          eq(length, 6)
+        }
+      });
+    },
+    'If an existing, yet-unvisited element of the array is changed by callback, its value passed to the callback should be the value at the time find visits that elements index.': function () {
+      var testArray = [1, 2, 3, 4, 5, 6];
+      find(testArray, function (element, i) {
+        testArray[1] = "dog";
+        return element > 1;
+      });
+      // console.log(changedFind);
+      eq(changedFind[1], 2);
     }
   });
 </script>
