@@ -1,0 +1,68 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The find() method returns the value of the first element in the provided array that satisfies the provided testing function.
+   **/
+
+  // Function signature:
+  // arr.find(callback(element[, index[, array]])[, thisArg])
+  // will be recreated as:
+  // function find(array, callback(element, index, array,) {}, this arg)
+
+  /*
+  Callback parameters:*/
+
+  // callback - Function to execute on each value in the array, taking 3 arguments:
+  // // element - The current element in the array.
+  // // index Optional - The index (position) of the current element in the array.
+  // // array Optional -The array that find was called on.
+  // thisArg Optional - Object to use as this inside callback.
+
+  // Return Value:
+  // The value of the first element in the array that satisfies the provided testing function. Otherwise, undefined is returned.
+
+  function find(array, callback, optionalThisArg) {
+    if (optionalThisArg) {
+      callback = callback.bind(optionalThisArg);
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (callback(array[i], i)) {
+        return array[i];
+      };
+    }
+  };
+
+  tests({
+    'It should executes the callback function once for each index of the array': function () {
+      var howManyTimesDoesTheCallbackRun = 0;
+      find([1, 2, 23, 4, 5], function (index) {
+        howManyTimesDoesTheCallbackRun++
+      })
+      eq(howManyTimesDoesTheCallbackRun, 5);
+    },
+    'It should invoke the callback for every index of the array, not just those with assigned values': function () {
+      var howManyTimesDoesTheCallbackRun = 0;
+      find([1, 2, 23, 4, 5, , , , ,], function (index) {
+        howManyTimesDoesTheCallbackRun++
+      })
+      eq(howManyTimesDoesTheCallbackRun, 9);
+    },
+    'It should run the callback function once for each index of the array until the callback returns a truthy value.': function () {
+      var findTest = find([1, 2, 23, 4, 5, 21, , , ,], function (element) {
+        return element > 20;
+      })
+      eq(findTest, 23);
+    },
+    'It should return undefined if no truthy value returned.': function () {
+      var findTest = find([1, 2, 23, 4, 5, 21, , , ,], function (element) {
+        return element > 30;
+      })
+      eq(findTest, undefined);
+    },
+    'If a thisArg parameter is provided to find, it should be used as the this value inside each invocation of the callback': function () {
+      find([1, 2, 23, 4, 5, 21, , , ,], function (element) {
+        eq(this.description, 'this should be this!')
+      }, { description: 'this should be this!' })
+    }
+  });
+</script>
