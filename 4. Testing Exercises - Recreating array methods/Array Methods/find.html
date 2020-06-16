@@ -23,15 +23,15 @@
 
   function find(originalArray, callback, optionalThisArg) {
     var length = originalArray.length;
-    const unchangedArray = originalArray;
+    // const unchangedArray = originalArray;
 
     if (optionalThisArg) {
       callback = callback.bind(optionalThisArg);
     }
 
     for (let i = 0; i < length; i++) {
-      if (callback(unchangedArray[i], i, unchangedArray)) {
-        return unchangedArray[i];
+      if (callback(originalArray[i], i, originalArray)) {
+        return originalArray[i];
       };
     }
   };
@@ -73,7 +73,7 @@
     },
     'It should invoke the callback for every index of the array, not just those with assigned values': function () {
       var howManyTimesDoesTheCallbackRun = 0;
-      find([1, 2, 23, 4, 5, , , , ,], function () {
+      find([1, 2, 23, 4, 5, , , , ,], function (value, index) {
         howManyTimesDoesTheCallbackRun++
       })
       eq(howManyTimesDoesTheCallbackRun, 9);
@@ -96,13 +96,16 @@
       }, { description: 'this should be this!' })
     },
     'It should not visit any elements added to the array once callback after the call to find begins.': function () {
-      var testArray = [1, 2, 23, 4, 5, 21]
-      find([testArray], function (element) {
-        if (element > 20) {
+      var testArray = [1, 2, 23, 4, 5, 21];
+      var length = 0;
+      find(testArray, function (value, index) {
+        if (value > 20) {
           testArray.push(1);
-          eq(length, 6)
         }
+        length = testArray.length;
+        console.log('visited index ', index, ' with value', value);
       });
+      eq(length, 6);
     },
     'If an existing, yet-unvisited element of the array is changed by callback, its value passed to the callback should be the value at the time find visits that elements index.': function () {
       var testArray = [1, 2, 3, 4, 5, 6];
