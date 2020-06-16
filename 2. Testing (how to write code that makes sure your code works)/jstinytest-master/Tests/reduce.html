@@ -146,7 +146,7 @@
       eq(reduceResult, initialValue)
       eq(numberOfTimesCallbackHasRun, 0)
     },
-    'If no initalValue, and array has one element, return the only element without calling callback.': function () {
+    'If no initialValue, and array has one element, return the only element without calling callback.': function () {
       var numberOfTimesCallbackHasRun = 0;
       var reduceResult = reduce([1], function (previousValue, currentValue, currentIndex) {
         numberOfTimesCallbackHasRun++;
@@ -167,13 +167,13 @@
       }, 0);
       eq(sum, 5);
     },
-    'If no intial value, callback should exclude holes.': function () {
+    'If no initial value, callback should exclude holes.': function () {
       var sum = reduce([, 2, , 3, , ,], function (a, b) {
         return a + b;
       });
       eq(sum, 5);
     },
-    'If array is empty and no initalValue was provided, TypeError should be thrown.': function () {
+    'If array is empty and no initialValue was provided, TypeError should be thrown.': function () {
       var isTypeError = false;
       try {
         reduce([], function () { });
