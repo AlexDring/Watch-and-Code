@@ -1,0 +1,120 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The some() method tests whether at least one element in the array passes the test implemented by the provided function. 
+   * It returns a Boolean value.
+   **/
+
+  // Function signature:
+  // arr.some(callback(element[, index[, array]])[, thisArg])
+  // will be recreated as:
+  // function some(array, callback(element[, index[, array]]) {}[, this arg])
+
+  /**
+  * Callback parameters:*/
+
+  // callback - A function to test for each element, taking three arguments:
+  // // element - The current element being processed in the array.
+  // // index Optional - The index of the current element being processed in the array.
+  // // array Optional - The array some() was called upon.
+  // thisArg Optional - A value to use as this when executing callback.
+
+  // Return Value:
+  // true if the callback function returns a truthy value for at least one element in the array. Otherwise, false.
+
+  function some(array, callback, optionalThisArg) {
+    var length = array.length;
+
+    if (optionalThisArg) {
+      callback = callback.bind(optionalThisArg);
+    }
+
+    for (let i = 0; i < length; i++) {
+      if (i in array) {
+        if (callback(array[i], i, array)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  tests({
+    'It should executes the callback function once for each index of the array.': function () {
+      var callbackCounter = 0;
+      some([12, 3, 4,], function () {
+        callbackCounter++;
+      })
+      eq(callbackCounter, 3)
+    },
+    'It should pass the ith element as the first argument to the callback.': function () {
+      some([12], function (element) {
+        eq(element, 12);
+      })
+    },
+    'It should pass in the ith position as the second argument to the callback.': function () {
+      some([12], function (element, position) {
+        eq(position, 0);
+      })
+    },
+    'It should pass in the original array as the third argument to the callback.': function () {
+      var someArray = [1, 2, 3, 4, 5,];
+      some(someArray, function (element, position, array) {
+        eq(someArray, array);
+      })
+    },
+    'It should only invoke the callback for array indexes which have assigned values.': function () {
+      var callbackCounter = 0;
+      some([1, 2, 3, 4, , , , , 9, 10], function (element, position, array) {
+        callbackCounter++;
+      });
+      eq(callbackCounter, 6);
+    },
+    'If a thisArg parameter is provided, it should be used as the this value inside each invocation of the callback.': function () {
+      some([1, 2, 3, 4, , , , , 9, 10], function (element, position, array) {
+        eq(this.thisObject, 'This is it!');
+      }, { thisObject: 'This is it!' });
+    },
+    'It should not visit any elements added to the array once callback begins.': function () {
+      var callbackCounter = 0;
+      var someArray = [1, 2, 3]
+      some(someArray, function (element, position, array) {
+        someArray.push('dogs');
+        callbackCounter++;
+      });
+      eq(callbackCounter, 3);
+    },
+    'It should return true immediately if the callback returns a truthy value.': function () {
+      var callbackCounter = 0;
+      var someArray = [1, 2, 3]
+      var trueArray = some(someArray, function (element, position, array) {
+        callbackCounter++;
+        return element === 2;
+      });
+      eq(callbackCounter, 2);
+      eq(trueArray, true);
+    },
+    'It should return false if the callback doesn\'t return a truthy value.': function () {
+      var callbackCounter = 0;
+      var someArray = [1, 2, 3]
+      var falseArray = some(someArray, function (element, position, array) {
+        callbackCounter++;
+        return element === 5;
+      });
+      eq(falseArray, false);
+    },
+    'It should return false if called on an empty array.': function () {
+      var emptyArray = some([], function (element, position, array) {
+
+      });
+      eq(emptyArray, false);
+    },
+    'If an existing, unvisited element of the array is changed by callback, its value passed to the visiting callback will be the value at the time that some() visits that element\'s index.': function () {
+      var someArray = [1, 2, 3, 4, 5]
+      var changedArray = some(someArray, function (element, i, array) {
+        someArray[i + 1] += 2;
+      });
+      eq(someArray[1], 4);
+    }
+  });
+</script>
