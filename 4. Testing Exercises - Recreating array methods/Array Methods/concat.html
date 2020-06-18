@@ -1,0 +1,78 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The concat() method is used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
+   **/
+
+  // Function signature:
+  // const new_array = old_array.concat([value1[, value2[, ...[, valueN]]]])
+  // will be recreated as:
+  // const new_array = concat([value1[, value2[, ...[, valueN]]]])
+
+  /**
+  * Parameters:*/
+
+  // valueN Optional - Arrays and/or values to concatenate into a new array. 
+  // If all valueN parameters are omitted, concat returns a shallow copy of the existing array on which it is called. See the description below for more details.
+
+  // Return Value:
+  // A new Array instance.
+
+
+
+  function concat() {
+    var newArray = [];
+
+
+    // This gets iterates over arrays.
+    for (var i = 0; i < arguments.length; i++) {
+
+      if (Array.isArray(arguments[i])) {
+        var singleArg = arguments[i];
+
+        // This accesses the elements inside the array 
+        for (let i = 0; i < singleArg.length; i++) {
+          // push individual value to newArray
+          newArray.push(singleArg[i]);
+        }
+
+      } else {
+        newArray.push(arguments[i]);
+      }
+    }
+
+    return newArray;
+
+  }
+
+  tests({
+    'It should create a new array': function () {
+      var originalArray = [1, 2, 3];
+      var arrayTest = concat(originalArray);
+      eq(originalArray !== arrayTest, true)
+    },
+    'The new array should consist of the elements in the object on which it is called.': function () {
+      var originalArray = [1, 2, 3];
+      var arrayTest = concat(originalArray);
+      console.log(arrayTest);
+      eq(originalArray.length, arrayTest.length)
+      eq(originalArray[0], arrayTest[0])
+      eq(originalArray[2], arrayTest[2])
+    },
+    'The new array should be followed by the elements in the arguments that follow.': function () {
+      var array1 = [1, 2, 3];
+      var array2 = [4, 5, 6];
+      var array3 = [7, 8, 9];
+      var array4 = concat(array1, array2, array3);
+      eq(array4.length, 9);
+    },
+    'The new array should accept all data types.': function () {
+      var array1 = [1, 2, 3];
+      var array2 = [4, 5, 6];
+      var array3 = [7, 8, 9];
+      var array4 = concat(array1, array2, array3, 4, 56, 7, 'dog', true);
+      console.log(array4)
+      eq(array4.length, 14);
+    }
+  });
+</script>
