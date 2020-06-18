@@ -7,7 +7,7 @@
   // Function signature:
   // const new_array = old_array.concat([value1[, value2[, ...[, valueN]]]])
   // will be recreated as:
-  // const new_array = concat([value1[, value2[, ...[, valueN]]]])
+  // const new_array = concat([old_array[, value1[, ...[, valueN]]]])
 
   /**
   * Parameters:*/
@@ -24,13 +24,15 @@
     var newArray = [];
 
 
-    // This gets iterates over arrays.
+    // This gets iterates over arguments.
     for (var i = 0; i < arguments.length; i++) {
 
+      // If argument is array.
       if (Array.isArray(arguments[i])) {
+
         var singleArg = arguments[i];
 
-        // This accesses the elements inside the array 
+        // This accesses the elements inside the array and iterates over them.
         for (let i = 0; i < singleArg.length; i++) {
           // push individual value to newArray
           newArray.push(singleArg[i]);
@@ -51,7 +53,7 @@
       var arrayTest = concat(originalArray);
       eq(originalArray !== arrayTest, true)
     },
-    'The new array should consist of the elements in the object on which it is called.': function () {
+    'It should push values from original array into the new array.': function () {
       var originalArray = [1, 2, 3];
       var arrayTest = concat(originalArray);
       console.log(arrayTest);
@@ -66,13 +68,38 @@
       var array4 = concat(array1, array2, array3);
       eq(array4.length, 9);
     },
-    'The new array should accept all data types.': function () {
+    'It should copy the values of strings and numbers into the new array.': function () {
       var array1 = [1, 2, 3];
       var array2 = [4, 5, 6];
       var array3 = [7, 8, 9];
       var array4 = concat(array1, array2, array3, 4, 56, 7, 'dog', true);
       console.log(array4)
       eq(array4.length, 14);
+      eq(array4[12], 'dog');
+      eq((typeof array4[12]), 'string');
+    },
+    'It should copy the object references into the new array - if a referenced object is modified the changes are visible in the new and original arrays': function () {
+      const num1 = [[1]];
+      const num2 = [2, [3]];
+      var num3 = 4;
+      var output = concat(num1, num2, num3);
+      num1[0].push(4);
+      eq(output[3], 4)
+    },
+    'If only one array is passed in, it should return a shallow copy of the existing array. ': function () {
+      const num1 = [1, 2, 3];
+
+      var output = concat(num1);
+
+      eq(output[0], 1)
+    },
+    'If should not recurse into nested array arguments. ': function () {
+      const num1 = [1, [2, 3]];
+
+      var output = concat(num1);
+
+      eq(output[0], 1)
+      eq(output[1][0], 2)
     }
   });
 </script>
