@@ -1,0 +1,80 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The includes() method determines whether an array includes a certain value among its entries, returning true or false as appropriate.
+   */
+
+  // Examples:
+  // const array1 = [1, 2, 3];
+
+  // console.log(array1.includes(2));
+  // // expected output: true
+
+  // const pets = ['cat', 'dog', 'bat'];
+
+  // console.log(pets.includes('cat'));
+  // // expected output: true
+
+  // console.log(pets.includes('at'));
+  // // expected output: false
+
+  /*
+    // Function signature:
+    // arr.includes(valueToFind[, fromIndex])
+    // will be recreated as:
+    // function includes(array, valueToFind[, fromIndex])
+  */
+
+  /**
+  * Parameters:
+  * 
+  // valueToFind - The value to search for.
+  // fromIndex Optional - The position in this array at which to begin searching for valueToFind.
+
+  // Return Value:
+  // A Boolean which is true if the value valueToFind is found within the array (or the part of the array indicated by the index fromIndex, if specified).
+  * 
+  * */
+  function includes(array, valueToFind, fromIndex = 0) {
+    var startingIndex = fromIndex;
+
+    if (fromIndex < 0) {
+      startingIndex = array.length + fromIndex;
+    }
+
+    for (let i = startingIndex; i < array.length; i++) {
+      // If array[i] === valueToFind return true
+      console.log("index: ", i, "element: ", array[i])
+      if (array[i] === valueToFind) {
+        return true
+      }
+    }
+    return false
+  }
+
+  tests({
+    'It should take an array as the first argument': function () {
+      fail();
+    },
+    'It should return true if valueToFind is found in the array.': function () {
+      var includeArray = [1, 2, 3, 4, 5];
+      var returnedIncludes = includes(includeArray, 5);
+      eq(returnedIncludes, true)
+    },
+    'It should return false if valueToFind is not found in the array.': function () {
+      var includeArray = [1, 2, 3, 4, 5];
+      var returnedIncludes = includes(includeArray, 6);
+      eq(returnedIncludes, false)
+    },
+    'If fromIndex is provided, it should start at the fromIndex position.': function () {
+      var includeArray = [1, 2, 3, 4, 5];
+      var returnedIncludes = includes(includeArray, 3, 3);
+      eq(returnedIncludes, false)
+    },
+    'It should start search at arr.length + fromIndex for negative fromIndex values.': function () {
+      var includeArray = [1, 2, 3, 4, 5];
+      var returnedIncludes = includes(includeArray, 3, -3);
+      eq(returnedIncludes, true)
+    }
+  });
+</script>
