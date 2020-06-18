@@ -57,9 +57,7 @@
   }
 
   tests({
-    'It should iterate over each element in the array.': function () {
-      indexOf(['dog', 'cat', 'rabbit'], 'cat');
-    },
+
     'It should return the first index at which a given element can be found in the array': function () {
       var returnedIndex = indexOf(['dog', 'cat', 'rabbit'], 'cat');
       eq(returnedIndex, 1);
