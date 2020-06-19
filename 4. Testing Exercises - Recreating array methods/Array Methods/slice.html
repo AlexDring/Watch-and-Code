@@ -1,0 +1,153 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The slice() method returns a shallow copy of a portion of an array into a new array object selected from start to end (end not included) where start and end represent the index of items in that array. The original array will not be modified.
+   */
+
+  // Examples:
+  // const animals = ['ant', 'bison', 'camel', 'duck', 'elephant'];
+
+  // console.log(animals.slice(2));
+  // // expected output: Array ["camel", "duck", "elephant"]
+
+  // console.log(animals.slice(2, 4));
+  // // expected output: Array ["camel", "duck"]
+
+  // console.log(animals.slice(1, 5));
+  // // expected output: Array ["bison", "camel", "duck", "elephant"]
+
+  /*
+    // Function signature:
+    // arr.slice([start[, end]])
+    // will be recreated as:
+    // function slice(array, [start[, end]])
+  */
+
+  /**
+  * Parameters:
+  * 
+  // start Optional -Zero-based index at which to start extraction.
+    A negative index can be used, indicating an offset from the end of the sequence. slice(-2) extracts the last two elements in the sequence.
+    If start is undefined, slice starts from the index 0.
+    If start is greater than the index range of the sequence, an empty array is returned.
+  // end Optional
+      Zero-based index before which to end extraction. slice extracts up to but not including end. For example, slice(1,4) extracts the second element through the fourth element (elements indexed 1, 2, and 3).
+      A negative index can be used, indicating an offset from the end of the sequence. slice(2,-1) extracts the third element through the second-to-last element in the sequence.
+      If end is omitted, slice extracts through the end of the sequence (arr.length).
+      If end is greater than the length of the sequence, slice extracts through to the end of the sequence (arr.length).
+
+  // Return Value:
+  // A new array containing the extracted elements.
+  * */
+
+  function slice(array, optionalStart = 0, optionalEnd = Object.keys(array).length) {
+    var length = Object.keys(array).length;
+    var startingIndex = optionalStart;
+    var endIndex = optionalEnd
+
+    // Offsets optionalStart value to end of array if negative
+    if (optionalStart < 0) {
+      startingIndex = (length + optionalStart);
+    }
+
+    // Offsets optionalEnd index to end of array if negative
+    if (optionalEnd < 0) {
+      endIndex = (length + optionalEnd);
+    }
+
+    var newArray = [];
+
+    for (let i = startingIndex; i < endIndex; i++) {
+      if (i in array) {
+        newArray.push(array[i]);
+      }
+    }
+    return newArray;
+  }
+
+  tests({
+    'It should return a shallow copy.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray);
+      eq(originalArray !== returnedArray, true);
+    },
+    'It should start extraction at optionalStart position.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 3);
+      eq(returnedArray, 4);
+    },
+
+    'It should return to newArray, everything after and including optionalStart position.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 2);
+
+      eq(returnedArray.length, 2);
+      eq(returnedArray[0], 3);
+      eq(returnedArray[1], 4);
+    },
+    'It should return an empty array if start is greater than array.length': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 5);
+
+      eq(returnedArray.length, 0);
+    },
+    'It should start from index 0 if start is undefined': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray);
+
+      eq(returnedArray[0], 1);
+    },
+    'If a negative index is used for optionalStart, it should offset the value from the end of the sequence e.g -2 extracts last two elements of sequence.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, -2);
+
+      eq(returnedArray.length, 2);
+      eq(returnedArray[0], 3);
+      eq(returnedArray[1], 4);
+    },
+
+    'It stop extraction up to but not including optionalEnd position and return values to newArray.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 1, 3);
+      eq(returnedArray.length, 2);
+      eq(returnedArray[0], 2);
+      eq(returnedArray[1], 3);
+    },
+    'If a negative index is used for optionalEnd, it should offset the value from the end of the sequence e.g 2, -1 extracts last third to second last element in array.': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 1, -1);
+      eq(returnedArray.length, 2);
+      eq(returnedArray[0], 2);
+      eq(returnedArray[1], 3);
+    },
+    'If no optionalEnd value, slice extracts through to end of sequence(array.length).': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 1);
+      eq(returnedArray.length, 3);
+      eq(returnedArray[0], 2);
+      eq(returnedArray[2], 4);
+    },
+    'If optionalEnd value is greater than array.length, slice extracts through to end of sequence(array.length).': function () {
+      var originalArray = [1, 2, 3, 4];
+      var returnedArray = slice(originalArray, 1, 5);
+      console.log(returnedArray);
+      eq(returnedArray.length, 3);
+      eq(returnedArray[0], 2);
+      eq(returnedArray[2], 4);
+    },
+
+    'If the originalArray changes, the change should be visible in the returnedArray.': function () {
+      let myHonda = { color: 'red', wheels: 4, engine: { cylinders: 4, size: 2.2 } }
+      let originalObject = [myHonda, 2, 'cherry condition', 'purchased 1997']
+      var returnedArray = slice(originalObject);
+      myHonda.color = 'purple';
+      console.log(returnedArray)
+      eq(returnedArray.length, 4);
+      eq(returnedArray[0].color, 'purple');
+    },
+    'Throw a typeError if you pass in an object': function () {
+      //VM422:1 Uncaught TypeError: myHonda.splice is not a function
+      fail();
+    }
+  });
+</script>

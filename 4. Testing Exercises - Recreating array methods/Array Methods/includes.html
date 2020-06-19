@@ -43,8 +43,7 @@
     }
 
     for (let i = startingIndex; i < array.length; i++) {
-      // If array[i] === valueToFind return true
-      console.log("index: ", i, "element: ", array[i])
+      // console.log("index: ", i, "element: ", array[i])
       if (array[i] === valueToFind) {
         return true
       }
@@ -53,9 +52,6 @@
   }
 
   tests({
-    'It should take an array as the first argument': function () {
-      fail();
-    },
     'It should return true if valueToFind is found in the array.': function () {
       var includeArray = [1, 2, 3, 4, 5];
       var returnedIncludes = includes(includeArray, 5);
@@ -75,6 +71,21 @@
       var includeArray = [1, 2, 3, 4, 5];
       var returnedIncludes = includes(includeArray, 3, -3);
       eq(returnedIncludes, true)
+    },
+    'It should consider all values of 0 to be equal, regardless of sign. (That is, -0 is considered to be equal to both 0 and +0).': function () {
+      var includeArray = [1, 2, 3, 4, 5, +0];
+      var returnedIncludes = includes(includeArray, -0);
+      eq(returnedIncludes, true)
+    },
+    'It should be case-sensitive when comparing strings and characters.': function () {
+      var includeArray = [1, 2, 3, 4, 5, 'DOG'];
+      var returnedIncludes = includes(includeArray, 'dog');
+      eq(returnedIncludes, false)
+    },
+    'It should return false if fromIndex is greater than or equal to the length of the array.': function () {
+      var includeArray = [1, 2, 3, 4, 5, 'DOG'];
+      var returnedIncludes = includes(includeArray, 'DOG', 6);
+      eq(returnedIncludes, false)
     }
   });
 </script>
