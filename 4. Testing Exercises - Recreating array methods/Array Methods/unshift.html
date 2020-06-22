@@ -1,0 +1,61 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+  * The unshift() method adds one or more elements to the beginning of an array and returns the new length of the array.
+  * */
+
+  // Examples:
+  // const array1 = [1, 2, 3];
+
+  // console.log(array1.unshift(4, 5));
+  // // expected output: 5
+
+  // console.log(array1);
+  // // expected output: Array [4, 5, 1, 2, 3]
+
+
+  /*
+    // Function signature:
+    // arr.unshift(element1[, ...[, elementN]])
+    // will be recreated as:
+    // function unshift(array, element1[, ...[, elementN]])
+  */
+
+  /* Parameters
+  // elementN - The elements to add to the front of the arr.
+  // Return value - The new length property of the object upon which the method was called.
+  */
+
+  function unshift(array) {
+
+    for (let i = arguments.length - 1; i > 0; i--) {
+
+      array.splice(0, 0, arguments[i])
+
+    }
+
+    return array.length
+
+  }
+
+  tests({
+    'It should return the new length of the array.': function () {
+      var array = [1, 2, 3]
+      var returnedLength = unshift(array)
+      eq(returnedLength, array.length)
+    },
+    'It should add one or more elements specified after the originalArray to the beginning of the array.': function () {
+      var array = [1, 2, 3]
+      var returnedLength = unshift(array, 4)
+      eq(returnedLength, 4)
+      eq(array[0], 4)
+    },
+    'If multiple elements are passed in, it should insert them into the array in the same order.': function () {
+      var array = [1, 2, 3]
+      var returnedLength = unshift(array, 4, 5)
+      eq(returnedLength, 5)
+      eq(array[0], 4)
+      eq(array[1], 5)
+    }
+  });
+</script>
