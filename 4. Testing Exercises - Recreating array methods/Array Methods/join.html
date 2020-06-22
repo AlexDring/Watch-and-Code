@@ -32,37 +32,17 @@
   // A string with all array elements joined. If arr.length is 0, the empty string is returned.
   * */
 
-  function join(array, separator = ',') {
-    // var newArray = [];
-
-    var returnedString = array.toString().replace(/,/g, separator);
+  function join(array, optionalSeparator = ',') {
+    // This converts array to string, replaces all instances (/g) of commas with specified optionalSeparator (, if not specified).
+    var returnedString = array.toString().replace(/,/g, optionalSeparator);
     return returnedString;
-
-
-    // if (separator) {
-    //   // This pushes 
-    //   for (let i = 0; i < array.length; i++) {
-    //     newArray.push(array[i])
-    //   }
-
-    //   var separatorString = newArray.toString().replace(/,/g, separator);
-    //   return separatorString;
-
-    // } else {
-
-    //   var string = array.toString();
-    //   return string;
-
-    // }
-
-
   }
 
   tests({
     'It should create and return a new string': function () {
       var originalArray = [1, 2, 3];
       var returnedString = join(originalArray)
-      eq(typeof returnedString === 'string', true)
+      eq(typeof returnedString, 'string')
     },
     'It should concatenate all of the elements in the originalArray, separated by commas.': function () {
       var originalArray = [1, 2, 3];
@@ -73,6 +53,38 @@
       var originalArray = [1, 2, 3];
       var returnedString = join(originalArray, ',-,')
       eq(returnedString, '1,-,2,-,3')
-    }
+    },
+    'If a separator string is omitted, the array elements should be separated by a comma.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedString = join(originalArray)
+      eq(returnedString, '1,2,3')
+    },
+    'If a separator is an empty string, all elements should be joined without any characters in between them.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedString = join(originalArray, '')
+      eq(returnedString, '123')
+    },
+    'If a separator is an empty string, all elements should be joined without any characters in between them.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedString = join(originalArray, '')
+      eq(returnedString, '123')
+    },
+    'It should return an empty string if array.length is 0.': function () {
+      var originalArray = [];
+      var returnedString = join(originalArray)
+      eq(returnedString, '')
+    },
+    'If the array only has one item, it should be returned without using the separator.': function () {
+      var originalArray = ['dog'];
+      var returnedString = join(originalArray, '-')
+      eq(returnedString, 'dog')
+    },
+    'If should join array-like objects.': function () {
+      function f(a, b, c) {
+        join(arguments);
+      }
+      var returnedString = f(1, 'a', true);
+      eq(returnedString, '1,a,true')
+    },
   });
 </script>
