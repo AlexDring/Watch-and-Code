@@ -1,0 +1,63 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+  * The shift() method removes the first element from an array and returns that removed element. This method changes the length of the array.
+  * */
+
+  // Examples:
+  // const array1 = [1, 2, 3];
+
+  // const firstElement = array1.shift();
+
+  // console.log(array1);
+  // // expected output: Array [2, 3]
+
+  // console.log(firstElement);
+  // // expected output: 1
+
+
+  /*
+    // Function signature:
+    // arr.shift()
+    // will be recreated as:
+    // function shift(array)
+  */
+
+  // Return Value:
+  // The removed element from the array; undefined if the array is empty.
+
+  function shift(array) {
+
+    const poppedElement = array[0]
+
+    array.splice(0, 1)
+
+    return poppedElement;
+
+  }
+
+  tests({
+    'It should remove the first element from array and shift the indexes down.': function () {
+      var array = [1, 2, 3, 4];
+      shift(array)
+      eq(array.length, 3)
+      eq(array[0], 2)
+    },
+    'It should return the removed element.': function () {
+      var array = ['dog', 1, 2];
+      var returnedElement = shift(array)
+      eq(returnedElement, 'dog')
+
+    },
+    'It should change the length of the original array.': function () {
+      var array = [1, 2];
+      var returnedElement = shift(array)
+      eq(array.length, 1)
+    },
+    'It should return undefined if array is empty': function () {
+      var array = [];
+      var returnedElement = shift(array)
+      eq(returnedElement, undefined)
+    }
+  });
+</script>
