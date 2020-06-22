@@ -1,0 +1,76 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+  * The push() method adds one or more elements to the end of an array and returns the new length of the array.
+  * */
+
+  // Examples:
+  // const animals = ['pigs', 'goats', 'sheep'];
+
+  // const count = animals.push('cows');
+  // console.log(count);
+  // // expected output: 4
+  // console.log(animals);
+  // // expected output: Array ["pigs", "goats", "sheep", "cows"]
+
+  // animals.push('chickens', 'cats', 'dogs');
+  // console.log(animals);
+  // // expected output: Array ["pigs", "goats", "sheep", "cows", "chickens", "cats", "dogs"]
+
+  /*
+    // Function signature:
+    // arr.push(element1[, ...[, elementN]])
+    // will be recreated as:
+    // function push(array, element1[, ...[, elementN])
+  */
+
+  /**
+  * Parameters:
+  * 
+  // elementN - The element(s) to add to the end of the array.
+
+  // Return Value:
+  // The new length property of the object upon which the method was called.
+  * */
+  function push(array) {
+    var arrayLength = array.length;
+
+    var argumentsLength = arguments.length
+
+    for (let i = 1; i < argumentsLength; i++) {
+      array[arrayLength] = arguments[i];
+      arrayLength++;
+    }
+
+    return array.length;
+
+  }
+
+  tests({
+    'It should return the length property of the object it was called on.': function () {
+      var returnedLength = push([1, 2, 3]);
+      eq(returnedLength, 3)
+    },
+    'It should append elementN to the end of originalArray.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedLength = push(originalArray, 4);
+      eq(originalArray.length, 4)
+      eq(originalArray[3], 4)
+    },
+    'It should accept an infinite number of arguments.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedLength = push(originalArray, 4, 5, 6, true, 'dog');
+      eq(originalArray.length, 8)
+      eq(originalArray[5], 6)
+      eq(originalArray[6], true)
+      eq(originalArray[7], 'dog')
+    },
+    'It should also push objects.': function () {
+      var originalArray = [1, 2, 3];
+      var returnedLength = push(originalArray, { color: 'Red', model: 'Honda' });
+      eq(returnedLength, 4)
+      eq(originalArray[3].color, 'Red')
+      eq(originalArray[3].model, 'Honda')
+    }
+  });
+</script>
