@@ -1,0 +1,63 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+  * The pop() method removes the last element from an array and returns that element. This method changes the length of the array.
+  * */
+
+  // Examples:
+  // const plants = ['broccoli', 'cauliflower', 'cabbage', 'kale', 'tomato'];
+
+  // console.log(plants.pop());
+  // // expected output: "tomato"
+
+  // console.log(plants);
+  // // expected output: Array ["broccoli", "cauliflower", "cabbage", "kale"]
+
+  // plants.pop();
+
+  // console.log(plants);
+  // // expected output: Array ["broccoli", "cauliflower", "cabbage"]
+
+  /*
+    // Function signature:
+    // arrName.pop()
+    // will be recreated as:
+    // function pop(array)
+  */
+
+  // Return Value:
+  // The removed element from the array; undefined if the array is empty.
+
+  function pop(array) {
+    var lastElementPosition = array.length - 1;
+    const poppedElement = array[lastElementPosition]
+
+    array.splice(lastElementPosition)
+
+    return poppedElement;
+
+  }
+
+  tests({
+    'It should remove the last element from array.': function () {
+      var array = [1, 2];
+      pop(array)
+      eq(array.length, 1)
+    },
+    'It should return the removed element.': function () {
+      var array = [1, 2];
+      var returnedElement = pop(array)
+      eq(returnedElement, 2)
+    },
+    'It should change the length of the original array.': function () {
+      var array = [1, 2];
+      var returnedElement = pop(array)
+      eq(array.length, 1)
+    },
+    'It should return undefined if array is empty': function () {
+      var array = [];
+      var returnedElement = pop(array)
+      eq(returnedElement, undefined)
+    }
+  });
+</script>
