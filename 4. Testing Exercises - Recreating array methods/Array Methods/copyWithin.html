@@ -1,0 +1,111 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+  * The copyWithin() method shallow copies part of an array to another location in the same array and returns it without modifying its length
+  * */
+
+  // Examples:
+  // const array1 = ['a', 'b', 'c', 'd', 'e'];
+
+  // // copy to index 0 the element at index 3
+  // console.log(array1.copyWithin(0, 3, 4));
+  // // expected output: Array ["d", "b", "c", "d", "e"]
+
+  // // copy to index 1 all elements from index 3 to the end
+  // console.log(array1.copyWithin(1, 3));
+  // // expected output: Array ["d", "d", "e", "d", "e"]
+
+  /* Function signature:
+    // arr.copyWithin(target[, start[, end]])
+    // will be recreated as:
+    // function copyWithin(array, target[, start[, end]])
+  */
+
+  /* Parameters:
+    // // target - Zero-based index at which to copy the sequence to. If negative, target will be counted from the end.
+    // // If target is at or greater than arr.length, nothing will be copied. If target is positioned after start, the copied sequence will be trimmed to fit arr.length.
+
+    // // start Optional - Zero-based index at which to start copying elements from. If negative, start will be counted from the end.
+    // // If start is omitted, copyWithin will copy from index 0. 
+
+    // // end Optional - Zero-based index at which to end copying elements from. copyWithin copies up to but not including end. If negative, end will be counted from the end.
+    // // If end is omitted, copyWithin will copy until the last index (default to arr.length).
+    // Return value - The modified array.
+  */
+
+  function copyWithin(array, target, optionalStart = 0, optionalEnd = array.length) {
+    var shallowCopy = [];
+    var copyIndex = target;
+
+    // ['a', 'b', 'c', 'd', 'e', 'f']
+
+    // copyWithin(array, 0, 3, 5)
+    for (let i = 0; i < array.length; i++) {
+      if (array[optionalStart]) {
+        array[target] = array[optionalStart];
+      }
+    }
+    // ["d", "e", "c", "d", "e", "f"]
+
+
+
+    // if (target < array.length) {
+
+    //   // iterate over array
+    //   for (let i = optionalStart; i < optionalEnd; i++) {
+
+    //     // push elements from optionalStart and optionalEnd positions to shallowCopy
+    //     shallowCopy.push(array[i]);
+
+    //   }
+
+    //   // Iterate over shallowCopy
+    //   for (let i = 0; i < shallowCopy.length; i++) {
+
+    //     if (target < array.length) {
+
+    //       array[target] = shallowCopy[i];
+    //       target++;
+
+    //     }
+    //   }
+
+    // }
+    console.log(shallowCopy)
+    console.log(array)
+    return array;
+  }
+
+  tests({
+    'It should return an array without modifying its length': function () {
+      var returnedArray = copyWithin([1, 2, 3])
+      eq(returnedArray.length, 3)
+    },
+    'If optionalStart is omitted it should copy the element at index 0 (this is the default) to the target position provided': function () {
+      const array = ['a', 'b', 'c', 'd', 'e'];
+      // Note - if optionalStart is omitted it will default to index 0;
+      copyWithin(array, /* target */ 3)
+      eq(array[3], 'a')
+    },
+    'If optionalStart index is provided it should copy the element at that index to the target index.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e'];
+      copyWithin(array, 3, 1)
+      eq(array[3], 'b')
+    },
+    'If optionalEnd index is provided it should copy the target element up to but not including the optionalEnd position.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, 1, 2, 5)
+      eq(JSON.stringify(array), JSON.stringify(['a', 'c', 'd', 'e', 'e', 'f']))
+    },
+    'If optionalEnd index is omitted it should copy the target element until the default array.length.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, 0, 3, 5)
+      eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'e', 'd']))
+    },
+    'If target is at or greater than array.length, nothing should be copied.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, 6)
+      eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'e', 'f']))
+    },
+  });
+</script>
