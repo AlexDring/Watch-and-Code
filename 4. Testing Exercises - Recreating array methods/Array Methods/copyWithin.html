@@ -36,45 +36,55 @@
   function copyWithin(array, target, optionalStart = 0, optionalEnd = array.length) {
     var shallowCopy = [];
     var copyIndex = target;
+    var length = array.length;
 
-    // ['a', 'b', 'c', 'd', 'e', 'f']
-
-    // copyWithin(array, 0, 3, 5)
-    for (let i = 0; i < array.length; i++) {
-      if (array[optionalStart]) {
-        array[target] = array[optionalStart];
-      }
+    if (target < 0) {
+      target = length + target;
     }
-    // ["d", "e", "c", "d", "e", "f"]
+    if (optionalEnd < 0) {
+      optionalEnd = length + optionalEnd;
+    }
+    if (optionalStart < 0) {
+      optionalStart = length + optionalStart;
+    }
 
+    if (target < length) {
 
+      // iterate over array
+      for (let i = optionalStart; i < optionalEnd; i++) {
 
-    // if (target < array.length) {
+        // push elements from optionalStart and optionalEnd positions to shallowCopy
+        shallowCopy.push(array[i]);
 
-    //   // iterate over array
-    //   for (let i = optionalStart; i < optionalEnd; i++) {
+      }
 
-    //     // push elements from optionalStart and optionalEnd positions to shallowCopy
-    //     shallowCopy.push(array[i]);
+      // Iterate over shallowCopy
+      for (let i = 0; i < shallowCopy.length; i++) {
 
-    //   }
+        if (target < length) {
 
-    //   // Iterate over shallowCopy
-    //   for (let i = 0; i < shallowCopy.length; i++) {
+          array[target] = shallowCopy[i];
+          target++;
 
-    //     if (target < array.length) {
+        }
+      }
 
-    //       array[target] = shallowCopy[i];
-    //       target++;
-
-    //     }
-    //   }
-
-    // }
+    }
     console.log(shallowCopy)
     console.log(array)
     return array;
   }
+
+
+    // // ['a', 'b', 'c', 'd', 'e', 'f']
+
+    // // copyWithin(array, 0, 3, 5)
+    // for (let i = 0; i < array.length; i++) {
+    //   if (array[optionalStart]) {
+    //     array[target] = array[optionalStart];
+    //   }
+    // }
+    // // ["d", "e", "c", "d", "e", "f"]
 
   tests({
     'It should return an array without modifying its length': function () {
@@ -100,12 +110,33 @@
     'If optionalEnd index is omitted it should copy the target element until the default array.length.': function () {
       const array = ['a', 'b', 'c', 'd', 'e', 'f'];
       copyWithin(array, 0, 3, 5)
-      eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'e', 'd']))
+      eq(JSON.stringify(array), JSON.stringify(['d', 'e', 'c', 'd', 'e', 'f']))
     },
     'If target is at or greater than array.length, nothing should be copied.': function () {
       const array = ['a', 'b', 'c', 'd', 'e', 'f'];
       copyWithin(array, 6)
       eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'e', 'f']))
+    },
+    'The copied sequence shouldn\'t alter the length of the original array even if the copied section exceeds array.length.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, 5, 1, 4)
+      eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'e', 'b']))
+    },
+    'If target is negative it should offset from the end.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, -2, 1)
+      eq(JSON.stringify(array), JSON.stringify(['a', 'b', 'c', 'd', 'b', 'c']))
+    },
+    'If optionalEnd is negative it should offset from the end.': function () {
+      const array = ['a', 'b', 'c', 'd', 'e', 'f'];
+      copyWithin(array, 0, 1, -2)
+      eq(JSON.stringify(array), JSON.stringify(['b', 'c', 'd', 'd', 'e', 'f']))
+    },
+    'If optionalStart is negative it should offset from the end.': function () {
+      const array = [1, 2, 3, 4, 5];
+      copyWithin(array, -2, -3, -1)
+
+      eq(JSON.stringify(array), JSON.stringify([1, 2, 3, 3, 4]))
     },
   });
 </script>
