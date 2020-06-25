@@ -1,9 +1,9 @@
 <script src="../simpletest.js"></script>
 <script>
   /**
-  * The sort() method sorts the elements of an array in place and returns the sorted array. The default sort order is ascending, built upon converting the elements into strings, then comparing their sequences of UTF-16 code units values.
-  * The time and space complexity of the sort cannot be guaranteed as it depends on the implementation.
-  * */
+   * The sort() method sorts the elements of an array in place and returns the sorted array. The default sort order is ascending, built upon converting the elements into strings, then comparing their sequences of UTF-16 code units values.
+   * The time and space complexity of the sort cannot be guaranteed as it depends on the implementation.
+   * */
 
   // Examples:
   // const months = ['March', 'Jan', 'Feb', 'Dec'];
@@ -16,93 +16,82 @@
   // console.log(array1);
   // // expected output: Array [1, 100000, 21, 30, 4]
 
-
   /* Function signature:
-    // arr.sort([compareFunction])
-    // will be recreated as:
-    // function sory(array[, compareFunction])
-  */
+      // arr.sort([compareFunction])
+      // will be recreated as:
+      // function sory(array[, compareFunction])
+    */
 
   /* Parameters:
-    // // compareFunction Optional - Specifies a function that defines the sort order. If omitted, the array elements are converted to strings, then sorted according to each character's Unicode code point value.
-    // // firstEl - The first element for comparison.
-    // // secondEl - The second element for comparison.
-    // Return value - The sorted array. Note that the array is sorted in place, and no copy is made.
-  */
+      // // compareFunction Optional - Specifies a function that defines the sort order. If omitted, the array elements are converted to strings, then sorted according to each character's Unicode code point value.
+      // // firstEl - The first element for comparison.
+      // // secondEl - The second element for comparison.
+      // Return value - The sorted array. Note that the array is sorted in place, and no copy is made.
+    */
 
+  // const sortAlphaNum = (a, b) => a.localeCompare(b, 'en', { numeric: true })
+  // console.log(['A1', 'A10', 'A11', 'A12', 'A2', 'A3', 'A4', 'B10', 'B2', 'F1', 'F12', 'F3'].sort(sortAlphaNum))
 
-// const sortAlphaNum = (a, b) => a.localeCompare(b, 'en', { numeric: true })
-// console.log(['A1', 'A10', 'A11', 'A12', 'A2', 'A3', 'A4', 'B10', 'B2', 'F1', 'F12', 'F3'].sort(sortAlphaNum))
+  // var a = 'a';
+  // var b = 'b';
 
-// var a = 'a';
-// var b = 'b';
+  // console.log(a.localeCompare(b)) // Output -1
 
-// console.log(a.localeCompare(b)) // Output -1
-
-function sort(array) {
-  var tempArray = [];
-  var comparisonArray = array.slice();
-  
-  var lessThanCounter = 0;
-  var  i = 0;
-  while (array[i]) {
-    for (let j = 0; j < comparisonArray.length; j++) {
-      // This converts elements to a string and then compares the reference strings -1 if less, 0 if the same, 1 if more than.
-      var compare = JSON.stringify(array[i]).localeCompare(JSON.stringify(comparisonArray[j]));
-      // Counts how many elements are less than compared string
-      lessThanCounter++; 
-
-      // If reference string is more than compared string
-      if (compare === 1) {
-        lessThanCounter = 0;
-        // Move to next item in original array
-        i++
-        break
-      }
-
-      // If element is less than all others in array
-      if(lessThanCounter === array.length) {
-        // push element to temporary array
-        tempArray.push(array[i])
-        // Remove element from comparison array 
-        comparisonArray.splice([i], 1)
-        // Remove element from original array
-        array.splice([i], 1)
-        lessThanCounter = 0;
-        // starts from beginning of original array as current element has been sorted. 
-        i = 0;
-        break;
+  function sort(array, compareFunction) {
+    console.log(array);
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array.length; j++) {
+        if (compareFunction(array[i], array[j])) {
+        } else {
+          if (String(array[i]) < String(array[j])) {
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
       }
     }
+    console.log(array);
+    return array;
   }
-  
-  array = Array.from(tempArray);
-  console.log(tempArray)
-  return array;
-}
 
   tests({
-    'It should return an array': function () {
-      var returnedArray = sort([1, 2])
-      eq(Array.isArray(returnedArray), true)
+    "It should return an array": function () {
+      var returnedArray = sort([1, 2]);
+      eq(Array.isArray(returnedArray), true);
     },
-    'It should return \'a\' before \'b\'': function () {
-      var returnedArray = sort(['b', 'a'])
-      eq(returnedArray[0], 'a')
+    "It should return 'a' before 'b'": function () {
+      var returnedArray = sort(["b", "a"]);
+      eq(returnedArray[0], "a");
     },
     'It should return "Dec", "Feb", "Jan", "March"': function () {
-      const months = ['March', 'Jan', 'Feb', 'Dec']
-      var returnedArray = sort(months)
-      eq(returnedArray[0], "Dec")
-      eq(returnedArray[3], "March")
+      const months = ["March", "Jan", "Feb", "Dec"];
+      var returnedArray = sort(months);
+      eq(returnedArray[0], "Dec");
+      eq(returnedArray[3], "March");
     },
-    'It should return 1,100000,21,30,4': function () {
-      var returnedArray = sort([1, 30, 4, 21, 100000])
-      eq(JSON.stringify(returnedArray), "[1,100000,21,30,4]")
+    "It should return 1,100000,21,30,4": function () {
+      var returnedArray = sort([1, 30, 4, 21, 100000]);
+      eq(JSON.stringify(returnedArray), "[1,100000,21,30,4]");
     },
-    'If a compare function is supplied, then it should compare the elements.': function () {
-      var returnedArray = sort([1, 30, 4, 21, 100000])
-      eq(JSON.stringify(returnedArray), "[1,100000,21,30,4]")
-    }
+    "If a compare function is supplied, then it should compare the elements.": function () {
+      var arrayReference = [1, 100000, 21, 30, 4];
+      var array = [1, 30, 4, 21, 100000];
+      var returnedArray = sort(array);
+      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
+    "If should sort all undefined elements to the end of the array.": function () {
+      var arrayReference = [80, 9, undefined, undefined, undefined];
+      var returnedArray = sort([80, undefined, undefined, undefined, 9]);
+      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
+    "If compareFunction is supplied, it should sort elements in numerical order.": function () {
+      var arrayReference = [9, 80, undefined, undefined, undefined];
+      var returnedArray = sort(
+        [80, undefined, undefined, undefined, 9],
+        function (a, b) {
+          return a - b;
+        }
+      );
+      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
   });
 </script>
