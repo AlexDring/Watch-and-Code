@@ -1,0 +1,191 @@
+<script src="../simpletest.js"></script>
+<script>
+  /**
+   * The splice() method changes the contents of an array by removing or replacing existing elements and/or adding new elements in place.
+   * */
+
+  // Examples:
+  // const months = ['Jan', 'March', 'April', 'June'];
+  // months.splice(1, 0, 'Feb');
+  // // inserts at index 1
+  // console.log(months);
+  // // expected output: Array ["Jan", "Feb", "March", "April", "June"]
+
+  // months.splice(4, 1, 'May');
+  // // replaces 1 element at index 4
+  // console.log(months);
+  // // expected output: Array ["Jan", "Feb", "March", "April", "May"]
+
+  /* Function signature:
+          // let arrDeletedItems = array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+          // will be recreated as:
+          // function splice(array, start[, deleteCount[, item1[, item2[, ...]]]])
+        */
+
+  /* Parameters:
+    // // start - The index at which to start changing the array.
+    // // deleteCount Optional - An integer indicating the number of elements in the array to remove from start.
+    // // item1, item2, ... Optional - The elements to add to the array, beginning from start. If you do not specify any elements, splice() will only remove elements from the array.
+    // Return value - An array containing the deleted elements.
+  */
+
+  function splice(array, start, deleteOptional = array.length) {
+    var first = [];
+    var removed = [];
+    var last = [];
+
+    for (let i = 0; i < array.length; i++) {
+      // Push elements before start index to first array
+      if (i < start) {
+        first.push(array[i]);
+      }
+      // Push elements between start index and start + deleteOptional.
+      else if (i >= start && i < start + deleteOptional) {
+        removed.push(array[i]);
+      }
+      // Push remaining elements to last array.
+      else if (i >= start + deleteOptional) {
+        last.push(array[i]);
+      }
+    }
+
+    // This çlears original array.
+    array.length = 0;
+
+    // Pushes start array to array
+    for (let j = 0; j < first.length; j++) {
+      array.push(first[j]);
+    }
+    // Pushes any additional arguments (after array, start, deleteOptional) to array.
+    if (arguments.length > 3) {
+      for (let k = 3; k < arguments.length; k++) {
+        array.push(arguments[k]);
+      }
+    }
+    // Pushes remaining elements to array.
+    for (let k = 0; k < last.length; k++) {
+      array.push(last[k]);
+    }
+
+    console.log("first", first);
+    console.log("removed", removed);
+    console.log("last", last);
+    console.log(array);
+
+    return removed;
+  }
+
+  // function splice(array, start, deleteCountOptional) {
+  //   var length = array.length;
+  //   // This moves the arrays after the deleted elements into the correct position.
+  //   var argumentLength = arguments.length - 3;
+  //   var arrayShift = start + deleteCountOptional;
+  //   // start = 3 delete = 3 array.length = 6
+  //   // keep keep keep skip skip skip keep
+
+  //   var deleteCounter = deleteCountOptional;
+  //   var argumentsCounter = 0;
+  //   var splicedElements = [];
+
+  //   for (let i = start; i < length; i++) {
+  //     // If element is equal to start index.
+
+  //     // Need to run this first as the array needs to be pushed/sorted so the argument loop below doesn't over write.
+
+  //     // Delete deleteCounter of elements
+  //     while (deleteCounter !== 0) {
+  //       // Push spliced element to new array.
+  //       splicedElements.push(array[i]);
+  //       deleteCounter--;
+  //       if (arguments.length < 2) {
+  //         array[i] = array[arrayShift];
+  //       }
+  //       i++;
+  //     }
+
+  //     // If optional argument is present iterate over x number of arguments
+  //     if (arguments.length > 3) {
+  //       for (let j = 3; j < arguments.length; j++) {
+  //         array[i] = arguments[j];
+  //         argumentsCounter++;
+  //         arrayShift;
+  //         i++;
+  //       }
+  //     }
+
+  //     continue;
+  //   }
+
+  //   array.length = length - deleteCountOptional + argumentsCounter;
+
+  //   return splicedElements;
+  // }
+
+  // function splice(array, start, optionalDelete = array.length) {
+  //   // This stores the removed elements.
+  //   var splicedElements = [];
+  //   // This gives the leftover elements the correct postion to move to after delted elements are gone.
+  //   var arrayShift = start + optionalDelete;
+
+  //   // This starts at start index and deletes until optionalDelete position.
+  //   for (let i = start; i < array.length; i++) {
+  //     splicedElements.push(array[i]);
+  //     if (arguments.length < 4) {
+  //       array[i] = array[arrayShift];
+  //     }
+  //   }
+
+  //   //This returns the spliced elements.
+  //   return splicedElements;
+  // }
+
+  tests({
+    "It should change the contents of an array by removing an existing element.": function () {
+      var array = ["Jan", "Feb", "March", "DOG", "April"];
+      var returnedArray = splice(array, 3, 1);
+
+      var comparisonArray = ["Jan", "Feb", "March", "April"];
+      console.log(array);
+      eq(JSON.stringify(comparisonArray), JSON.stringify(array));
+    },
+    "It should change the contents of an array by removing multiple existing elements.": function () {
+      var array = ["Jan", "Feb", "March", "DOG", "CAT", "MONKEY", "April"];
+      var returnedArray = splice(array, 3, 3);
+
+      var comparisonArray = ["Jan", "Feb", "March", "April"];
+      eq(JSON.stringify(comparisonArray), JSON.stringify(array));
+    },
+    "It should return the removed elements.": function () {
+      var array = ["Jan", "Feb", "March", "DOG", "CAT", "MONKEY", "April"];
+      var returnedArray = splice(array, 3, 3);
+
+      var comparisonArray = ["DOG", "CAT", "MONKEY"];
+      eq(JSON.stringify(comparisonArray), JSON.stringify(returnedArray));
+    },
+    "It should change the contents of an array by replacing an existing element.": function () {
+      let myFish = ["angel", "clown", "drum", "sturgeon"];
+      let removed = splice(myFish, 2, 1, "trumpet");
+
+      console.log(myFish);
+      console.log(removed);
+      var comparisonArray = ["angel", "clown", "trumpet", "sturgeon"];
+      eq(JSON.stringify(myFish), JSON.stringify(comparisonArray));
+      // myFish is ["angel", "clown", "trumpet", "sturgeon"]
+      // removed is ["drum"]
+    },
+    "It should change the contents of an array by replacing multiple existing elements.": function () {
+      let myFish = ["1", "2", "3", "4"];
+      let removed = splice(myFish, 0, 2, "one", "two", "three");
+
+      console.log(myFish);
+      console.log(removed);
+      var comparisonArray = ["one", "two", "three", "3", "4"];
+      eq(JSON.stringify(myFish), JSON.stringify(comparisonArray));
+      // myFish is ["parrot", "anemone", "blue", "trumpet", "sturgeon"]
+      // removed is ["angel", "clown"]
+    },
+    "It should change the contents of an array by adding new elements (without removing/replacing existing elements).": function () {
+      fail();
+    },
+  });
+</script>

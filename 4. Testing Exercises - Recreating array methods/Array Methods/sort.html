@@ -17,38 +17,48 @@
   // // expected output: Array [1, 100000, 21, 30, 4]
 
   /* Function signature:
-      // arr.sort([compareFunction])
-      // will be recreated as:
-      // function sory(array[, compareFunction])
-    */
+    // arr.sort([compareFunction])
+    // will be recreated as:
+    // function sort(array[, compareFunction])
+  */
 
   /* Parameters:
-      // // compareFunction Optional - Specifies a function that defines the sort order. If omitted, the array elements are converted to strings, then sorted according to each character's Unicode code point value.
-      // // firstEl - The first element for comparison.
-      // // secondEl - The second element for comparison.
-      // Return value - The sorted array. Note that the array is sorted in place, and no copy is made.
-    */
-
-  // const sortAlphaNum = (a, b) => a.localeCompare(b, 'en', { numeric: true })
-  // console.log(['A1', 'A10', 'A11', 'A12', 'A2', 'A3', 'A4', 'B10', 'B2', 'F1', 'F12', 'F3'].sort(sortAlphaNum))
-
-  // var a = 'a';
-  // var b = 'b';
-
-  // console.log(a.localeCompare(b)) // Output -1
+    // // compareFunction Optional - Specifies a function that defines the sort order. If omitted, the array elements are converted to strings, then sorted according to each character's Unicode code point value.
+    // // firstEl - The first element for comparison.
+    // // secondEl - The second element for comparison.
+    // Return value - The sorted array. Note that the array is sorted in place, and no copy is made.
+  */
 
   function sort(array, compareFunction) {
-    console.log(array);
-    for (let i = 0; i < array.length; i++) {
-      for (let j = 0; j < array.length; j++) {
-        if (compareFunction(array[i], array[j])) {
-        } else {
-          if (String(array[i]) < String(array[j])) {
-            [array[i], array[j]] = [array[j], array[i]];
-          }
+    var length = array.length;
+
+    // if compare is provided, it should move undefined to end of array.
+    if (compareFunction) {
+      var k = length - 1;
+      while (k--) {
+        if (array[k] === undefined) {
+          // undefined shouldn't be run through compare function, so push undefined to end and decrease number of times it runs compareFunction iterates over array.
+          length--;
+          array.push(array.splice(k, 1)[0]);
         }
       }
     }
+
+    for (let i = 0; i < length; i++) {
+      for (let j = i + 1; j < length; j++) {
+        if (compareFunction) {
+          // If compareFunction returns greater than 0, sort b to an index lower than a (i.e. b comes first).
+          if (compareFunction(array[i], array[j]) > 0) {
+            [array[i], array[j]] = [array[j], array[i]];
+          } // Else, If compareFunction returns less than 0, sort a to an index lower than b (i.e. a comes first) - stay in the same place, no function needed.
+
+          // Else if no compareFunction present, convert to strings and compare.
+        } else if (String(array[i]) > String(array[j])) {
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+    }
+
     console.log(array);
     return array;
   }
@@ -88,10 +98,83 @@
       var returnedArray = sort(
         [80, undefined, undefined, undefined, 9],
         function (a, b) {
+          console.log("Test", a - b);
           return a - b;
         }
       );
       eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
+    "If compareFunction returns a negative number (return b - a), it should be sorted in descending order.": function () {
+      var arrayReference = [100000, 30, 21, 4, 1];
+      var returnedArray = sort([1, 30, 4, 21, 100000], function (a, b) {
+        // console.log("Test b-a", b - a);
+        return b - a;
+      });
+      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
+    "If compareFunction returns a positive number (return a - b), it should be sorted in ascending order.": function () {
+      var arrayReference = [1, 4, 21, 30, 100000];
+      var returnedArray = sort([1, 30, 4, 21, 100000], function (a, b) {
+        console.log(a, "minus", b, "equals", a - b);
+        return a - b;
+      });
+      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+    },
+    "If should be able to sort Objects after being given the value of one of their properties.": function () {
+      var items = [
+        { name: "Edward", value: 21 },
+        { name: "Sharpe", value: 37 },
+        { name: "And", value: 45 },
+        { name: "The", value: -12 },
+        { name: "Magnetic", value: 13 },
+        { name: "Zeros", value: 37 },
+      ];
+      var correctSort = [
+        { name: "The", value: -12 },
+        { name: "Magnetic", value: 13 },
+        { name: "Edward", value: 21 },
+        { name: "Sharpe", value: 37 },
+        { name: "Zeros", value: 37 },
+        { name: "And", value: 45 },
+      ];
+      var returnedArray = sort(items, function (a, b) {
+        console.log(a, "minus", b, "equals", a - b);
+        return a.value - b.value;
+      });
+      eq(JSON.stringify(returnedArray), JSON.stringify(correctSort));
+    },
+    "If should be able to sort Objects after being given the value of one of their properties - NAME.": function () {
+      var items = [
+        { name: "Edward", value: 21 },
+        { name: "Sharpe", value: 37 },
+        { name: "And", value: 45 },
+        { name: "The", value: -12 },
+        { name: "Magnetic", value: 13 },
+        { name: "Zeros", value: 37 },
+      ];
+      var correctSort = [
+        { name: "And", value: 45 },
+        { name: "Edward", value: 21 },
+        { name: "Magnetic", value: 13 },
+        { name: "Sharpe", value: 37 },
+        { name: "The", value: -12 },
+        { name: "Zeros", value: 37 },
+      ];
+      var returnedArray = sort(items, function (a, b) {
+        console.log(a, "minus", b, "equals", a - b);
+        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        // names must be equal
+        return 0;
+      });
+      eq(JSON.stringify(returnedArray), JSON.stringify(correctSort));
     },
   });
 </script>
