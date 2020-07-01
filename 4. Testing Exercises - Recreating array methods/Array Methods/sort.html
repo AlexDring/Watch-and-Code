@@ -37,8 +37,9 @@
       var k = length - 1;
       while (k--) {
         if (array[k] === undefined) {
-          // undefined shouldn't be run through compare function, so push undefined to end and decrease number of times it runs compareFunction iterates over array.
+          // undefined elements shouldn't be run through compare function, so push undefined to end and reduce length, this will stop the for loop iterating over the undefined elements in the for loop that follows.
           length--;
+          // This pushes the spliced element to array. The reason [0] follows splice is because splice returns an array. If it was left off it would return [[null],[null],[null]], adding [0] specifies that the first element must be pushed so we're get [null,null,null] instead - "splice returns an array. When you push an array into an array, you get an array of arrays. By adding the [0], you push the first element of the array instead."
           array.push(array.splice(k, 1)[0]);
         }
       }
@@ -64,61 +65,80 @@
   }
 
   tests({
-    "It should return an array": function () {
-      var returnedArray = sort([1, 2]);
-      eq(Array.isArray(returnedArray), true);
-    },
-    "It should return 'a' before 'b'": function () {
+    "It should sort elements of an array in place": function () {
       var returnedArray = sort(["b", "a"]);
       eq(returnedArray[0], "a");
+      eq(returnedArray[1], "b");
     },
-    'It should return "Dec", "Feb", "Jan", "March"': function () {
+    "It should return the sorted array": function () {
+      var returnedArray = sort(["b", "c", "a"]);
+
+      var comparisonArray = ["a", "b", "c"];
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
+    },
+    "It should return an array in ascending order by default": function () {
+      var returnedArray = sort([5, 3, 4, 2, 1]);
+
+      var comparisonArray = [1, 2, 3, 4, 5];
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
+    },
+    "It should convert the elements into strings then compare their UTF-16 code unit values": function () {
+      var returnedArray = sort(["a", "b", "c", "A", "B", "C", 2, 3, 1]);
+
+      // numbers appear before capitals which appear before lower case as this is the order of their UTF-16 values
+      var comparisonArray = [1, 2, 3, "A", "B", "C", "a", "b", "c"];
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
+    },
+    "It should sort in alphabetical order by default.": function () {
       const months = ["March", "Jan", "Feb", "Dec"];
       var returnedArray = sort(months);
       eq(returnedArray[0], "Dec");
       eq(returnedArray[3], "March");
     },
-    "It should return 1,100000,21,30,4": function () {
-      var returnedArray = sort([1, 30, 4, 21, 100000]);
-      eq(JSON.stringify(returnedArray), "[1,100000,21,30,4]");
-    },
-    "If a compare function is supplied, then it should compare the elements.": function () {
-      var arrayReference = [1, 100000, 21, 30, 4];
-      var array = [1, 30, 4, 21, 100000];
-      var returnedArray = sort(array);
-      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
-    },
     "If should sort all undefined elements to the end of the array.": function () {
-      var arrayReference = [80, 9, undefined, undefined, undefined];
       var returnedArray = sort([80, undefined, undefined, undefined, 9]);
-      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+
+      var comparisonArray = [80, 9, undefined, undefined, undefined];
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
     },
-    "If compareFunction is supplied, it should sort elements in numerical order.": function () {
-      var arrayReference = [9, 80, undefined, undefined, undefined];
+    "If compareFunction is provided, it shouldn't call undefined elements to compareFunction": function () {
+      var compareFunctionCounter = 0;
       var returnedArray = sort(
-        [80, undefined, undefined, undefined, 9],
+        [80, undefined, undefined, undefined, 9, 100],
         function (a, b) {
-          console.log("Test", a - b);
+          compareFunctionCounter++;
           return a - b;
         }
       );
-      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+
+      console.log(returnedArray);
+      eq(compareFunctionCounter, 3);
     },
+    "If compareFunction is supplied, it should sort elements in numerical order. When omitted it converts the numbers to strings and sorts, so 80 would appear before 9 (9 is higher than 8).": function () {
+      var returnedArray = sort([9, 80, 5, 123, 5565, 2], function (a, b) {
+        console.log("Test", a - b);
+        return a - b;
+      });
+
+      var comparisonArray = [2, 5, 9, 80, 123, 5565];
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
+    },
+
     "If compareFunction returns a negative number (return b - a), it should be sorted in descending order.": function () {
-      var arrayReference = [100000, 30, 21, 4, 1];
+      var comparisonArray = [100000, 30, 21, 4, 1];
       var returnedArray = sort([1, 30, 4, 21, 100000], function (a, b) {
         // console.log("Test b-a", b - a);
         return b - a;
       });
-      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
     },
     "If compareFunction returns a positive number (return a - b), it should be sorted in ascending order.": function () {
-      var arrayReference = [1, 4, 21, 30, 100000];
+      var comparisonArray = [1, 4, 21, 30, 100000];
       var returnedArray = sort([1, 30, 4, 21, 100000], function (a, b) {
         console.log(a, "minus", b, "equals", a - b);
         return a - b;
       });
-      eq(JSON.stringify(returnedArray), JSON.stringify(arrayReference));
+      eq(JSON.stringify(returnedArray), JSON.stringify(comparisonArray));
     },
     "If should be able to sort Objects after being given the value of one of their properties.": function () {
       var items = [
