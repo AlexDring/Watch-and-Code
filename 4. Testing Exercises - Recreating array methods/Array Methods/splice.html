@@ -29,115 +29,55 @@
     // Return value - An array containing the deleted elements.
   */
 
-  function splice(array, start, deleteOptional = array.length) {
-    var first = [];
-    var removed = [];
-    var last = [];
+  function splice(array, start, deleteCountOptional = array.length) {
+    var beforeStartPosition = [];
+    var removedElements = [];
+    var afterDeletePosition = [];
+
+    // This sets offsets start position from the end of the array if it's a negative value.
+    if (start < 0) {
+      start = array.length + start;
+      // If start is still less than zero, equal zero.
+      if (start < 0) {
+        start = 0;
+      }
+    }
 
     for (let i = 0; i < array.length; i++) {
-      // Push elements before start index to first array
+      // Push elements before start index to beforeStartPosition array
       if (i < start) {
-        first.push(array[i]);
+        beforeStartPosition.push(array[i]);
       }
-      // Push elements between start index and start + deleteOptional.
-      else if (i >= start && i < start + deleteOptional) {
-        removed.push(array[i]);
+      // Push elements between start index and start + deleteCountOptional.
+      else if (i >= start && i < start + deleteCountOptional) {
+        removedElements.push(array[i]);
       }
-      // Push remaining elements to last array.
-      else if (i >= start + deleteOptional) {
-        last.push(array[i]);
+      // Push remaining elements to afterDeletePosition array.
+      else if (i >= start + deleteCountOptional) {
+        afterDeletePosition.push(array[i]);
       }
     }
 
-    // This çlears original array.
+    // This clears original array.
     array.length = 0;
 
-    // Pushes start array to array
-    for (let j = 0; j < first.length; j++) {
-      array.push(first[j]);
+    // Pushes beforeStartPosition array to array
+    for (let j = 0; j < beforeStartPosition.length; j++) {
+      array.push(beforeStartPosition[j]);
     }
-    // Pushes any additional arguments (after array, start, deleteOptional) to array.
+    // Pushes any additional arguments (after array, start, deleteCountOptional) to array.
     if (arguments.length > 3) {
       for (let k = 3; k < arguments.length; k++) {
         array.push(arguments[k]);
       }
     }
-    // Pushes remaining elements to array.
-    for (let k = 0; k < last.length; k++) {
-      array.push(last[k]);
+    // Pushes afterDeletePosition array elements to array.
+    for (let k = 0; k < afterDeletePosition.length; k++) {
+      array.push(afterDeletePosition[k]);
     }
 
-    console.log("first", first);
-    console.log("removed", removed);
-    console.log("last", last);
-    console.log(array);
-
-    return removed;
+    return removedElements;
   }
-
-  // function splice(array, start, deleteCountOptional) {
-  //   var length = array.length;
-  //   // This moves the arrays after the deleted elements into the correct position.
-  //   var argumentLength = arguments.length - 3;
-  //   var arrayShift = start + deleteCountOptional;
-  //   // start = 3 delete = 3 array.length = 6
-  //   // keep keep keep skip skip skip keep
-
-  //   var deleteCounter = deleteCountOptional;
-  //   var argumentsCounter = 0;
-  //   var splicedElements = [];
-
-  //   for (let i = start; i < length; i++) {
-  //     // If element is equal to start index.
-
-  //     // Need to run this first as the array needs to be pushed/sorted so the argument loop below doesn't over write.
-
-  //     // Delete deleteCounter of elements
-  //     while (deleteCounter !== 0) {
-  //       // Push spliced element to new array.
-  //       splicedElements.push(array[i]);
-  //       deleteCounter--;
-  //       if (arguments.length < 2) {
-  //         array[i] = array[arrayShift];
-  //       }
-  //       i++;
-  //     }
-
-  //     // If optional argument is present iterate over x number of arguments
-  //     if (arguments.length > 3) {
-  //       for (let j = 3; j < arguments.length; j++) {
-  //         array[i] = arguments[j];
-  //         argumentsCounter++;
-  //         arrayShift;
-  //         i++;
-  //       }
-  //     }
-
-  //     continue;
-  //   }
-
-  //   array.length = length - deleteCountOptional + argumentsCounter;
-
-  //   return splicedElements;
-  // }
-
-  // function splice(array, start, optionalDelete = array.length) {
-  //   // This stores the removed elements.
-  //   var splicedElements = [];
-  //   // This gives the leftover elements the correct postion to move to after delted elements are gone.
-  //   var arrayShift = start + optionalDelete;
-
-  //   // This starts at start index and deletes until optionalDelete position.
-  //   for (let i = start; i < array.length; i++) {
-  //     splicedElements.push(array[i]);
-  //     if (arguments.length < 4) {
-  //       array[i] = array[arrayShift];
-  //     }
-  //   }
-
-  //   //This returns the spliced elements.
-  //   return splicedElements;
-  // }
 
   tests({
     "It should change the contents of an array by removing an existing element.": function () {
@@ -185,7 +125,60 @@
       // removed is ["angel", "clown"]
     },
     "It should change the contents of an array by adding new elements (without removing/replacing existing elements).": function () {
-      fail();
+      let myNumbers = ["1", "2", "3", "7"];
+      let removed = splice(myNumbers, 3, 0, "four", "five", "six");
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["1", "2", "3", "four", "five", "six", "7"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
+    },
+
+    "If start is greater than the legth of the array, it should be set to the length of the array - no element will be deleted but the method will behave as an adding function, adding as many elements as item[n*] provided": function () {
+      let myNumbers = ["1", "2", "3"];
+      let removed = splice(myNumbers, 3, 3, "four", "five", "six");
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["1", "2", "3", "four", "five", "six"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
+    },
+    "If start is negative, it should begin that many elements from the end of the array.": function () {
+      let myNumbers = ["1", "2", "3", "7", "8"];
+      let removed = splice(myNumbers, -2, 0, "four", "five", "six");
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["1", "2", "3", "four", "five", "six", "7", "8"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
+    },
+    "If array.length + start is less than 0, it should begin from index 0.": function () {
+      let myNumbers = ["dog", "cat", "3", "4", "5"];
+      let removed = splice(myNumbers, -10, 2, "one", "two");
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["one", "two", "3", "4", "5"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
+    },
+
+    "If deleteCount is omitted, all elements from start will be deleted.": function () {
+      let myNumbers = ["dog", "cat", "3", "4", "5"];
+      let removed = splice(myNumbers, 2);
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["dog", "cat"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
+    },
+    "If deleteCount equal to or larger than array.length - start, all elements from start will be deleted.": function () {
+      let myNumbers = ["dog", "cat", "3", "4", "5"];
+      let removed = splice(myNumbers, 2, 4);
+
+      console.log(myNumbers);
+      console.log(removed);
+      var comparisonArray = ["dog", "cat"];
+      eq(JSON.stringify(myNumbers), JSON.stringify(comparisonArray));
     },
   });
 </script>
