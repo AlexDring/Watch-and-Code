@@ -1,8 +1,8 @@
 <script src="../simpletest.js"></script>
 <script>
   /**
-  * The reverse() method reverses an array in place. The first array element becomes the last, and the last array element becomes the first.
-  * */
+   * The reverse() method reverses an array in place. The first array element becomes the last, and the last array element becomes the first.
+   * */
 
   // Examples:
   // const array1 = ['one', 'two', 'three'];
@@ -16,7 +16,6 @@
   // // Careful: reverse is destructive -- it changes the original array.
   // console.log('array1:', array1);
   // // expected output: "array1:" Array ["three", "two", "one"]
-
 
   /*
     // Function signature:
@@ -33,34 +32,35 @@
     var endPosition = array.length - 1;
     var tempArray = [];
 
+    // Pushes elements to new array.
     for (let i = 0; i < array.length; i++) {
-      tempArray.push(array[i])
+      tempArray.push(array[i]);
     }
 
+    // Starts from end of new array and replaces each element iterating backwards.
     for (let i = 0; i < array.length; i++) {
       array[i] = tempArray[endPosition];
-      endPosition--
+      endPosition--;
     }
 
     return array;
-
   }
 
   tests({
-    'It should return an array': function (array) {
-      var returnedArray = reverse([1, 2, 3])
-      eq(Array.isArray(returnedArray), true)
+    "It should return an array": function (array) {
+      var returnedArray = reverse([1, 2, 3]);
+      eq(Array.isArray(returnedArray), true);
     },
-    'It should reverse the original array\'s elements': function (array) {
-      var returnedArray = reverse([1, 2, 3])
-      eq(returnedArray[0], 3)
-      eq(returnedArray[2], 1)
+    "It should reverse the original array's elements": function (array) {
+      var returnedArray = reverse([1, 2, 3]);
+      eq(returnedArray[0], 3);
+      eq(returnedArray[2], 1);
     },
-    'It should mutate the original array': function (array) {
-      var array = ['dog', 'cat']
-      reverse(array)
-      eq(array[0], 'cat')
-      eq(array[1], 'dog')
-    }
+    "It should mutate the original array": function (array) {
+      var array = ["dog", "cat"];
+      reverse(array);
+      eq(array[0], "cat");
+      eq(array[1], "dog");
+    },
   });
 </script>
